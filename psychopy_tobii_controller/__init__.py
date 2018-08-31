@@ -182,11 +182,11 @@ class tobii_controller:
                 msgst += 'Right: {:.3f},{:.3f},{:.3f}\n'.format(*rp)
                 msg.setText(msgst)
                 if lv:
-                    leye.setPos(self.get_psychopy_pos_from_trackbox((lp[0], lp[1])))
+                    leye.setPos(self.get_psychopy_pos_from_trackbox((lp[0], lp[1]), 'height'))
                     leye.setRadius((1-lp[2])/2)
                     leye.draw()
                 if rv:
-                    reye.setPos(self.get_psychopy_pos_from_trackbox((rp[0], rp[1])))
+                    reye.setPos(self.get_psychopy_pos_from_trackbox((rp[0], rp[1]), 'height'))
                     reye.setRadius((1-rp[2])/2)
                     reye.draw()
 
@@ -819,24 +819,27 @@ class tobii_controller:
         return (p[0]*(1/self.win.size[0]+0.5), p[1]*(-1/self.win.size[1]+0.5))
 
 
-    def get_psychopy_pos_from_trackbox(self, p):
+    def get_psychopy_pos_from_trackbox(self, p, units=None):
         """
         Convert Tobii TBCS coordinates to PsychoPy coordinates.
 
         :param p: Position (x, y)
         """
 
-        if self.win.units == 'norm':
+        if units is None:
+            units = self.win.units
+
+        if units == 'norm':
             return ((p[0]-1)/-2, (p[1]-1)/-2)
-        elif self.win.units == 'height':
+        elif units == 'height':
             return (-p[0]*(self.win.size[1]/self.win.size[0])+0.5, -p[1]+0.5)
-        elif self.win.units in ['pix', 'cm', 'deg', 'degFlat', 'degFlatPos']:
+        elif units in ['pix', 'cm', 'deg', 'degFlat', 'degFlatPos']:
             p_pix = (p[0]*(-1/self.win.size[0])+0.5, p[1]*(-1/self.win.size[1])+0.5)
-            if self.win.units == 'pix':
+            if units == 'pix':
                 return p_pix
-            elif self.win.units == 'cm':
+            elif units == 'cm':
                 return (pix2cm(p_pix[0], self.win.monitor), pix2cm(p_pix[1], self.win.monitor))
-            elif self.win.units == 'deg':
+            elif units == 'deg':
                 return (pix2deg(p_pix[0], self.win.monitor), pix2deg(p_pix[1], self.win.monitor))
             else:
                 return (pix2deg(np.array(p_pix), self.win.monitor, correctFlat=True))
