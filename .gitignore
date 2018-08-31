@@ -102,3 +102,6 @@ ENV/
 
 # working directory
 work/
+
+# vs code settings
+/.vscode
