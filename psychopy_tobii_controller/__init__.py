@@ -188,7 +188,7 @@ class tobii_controller:
                     leye.setRadius((1-lp[2])/2)
                     leye.draw()
                 if rv:
-                    reye.setPos([0.6*x for x i
+                    reye.setPos([0.6*x for x in
                         self.get_psychopy_pos_from_trackbox((rp[0], rp[1]),
                         'height')])
                     reye.setRadius((1-rp[2])/2)
@@ -801,7 +801,7 @@ class tobii_controller:
         """
 
         if self.win.units == 'norm':
-            return ((p[0]+1)/2, -(p[1]+1)/2)
+            return ((p[0]+1)/2, (p[1]-1)/-2)
         elif self.win.units == 'height':
             return (p[0]*(self.win.size[1]/self.win.size[0])+0.5, -p[1]+0.5)
         elif self.win.units in ['pix', 'cm', 'deg', 'degFlat', 'degFlatPos']:
@@ -820,7 +820,7 @@ class tobii_controller:
 
 
     def pix2tobii(self, p):
-        return (p[0]*(1/self.win.size[0]+0.5), p[1]*(-1/self.win.size[1]+0.5))
+        return (p[0]*(1/self.win.size[0])+0.5, p[1]*(-1/self.win.size[1])+0.5)
 
 
     def get_psychopy_pos_from_trackbox(self, p, units=None):
@@ -834,11 +834,11 @@ class tobii_controller:
             units = self.win.units
 
         if units == 'norm':
-            return ((p[0]-1)/-2, (p[1]-1)/-2)
+            return (-2*p[0]+1, -2*p[1]+1)
         elif units == 'height':
-            return (-p[0]*(self.win.size[1]/self.win.size[0])+0.5, -p[1]+0.5)
+            return ((-p[0]+0.5)*(self.win.size[0]/self.win.size[1]), -p[1]+0.5)
         elif units in ['pix', 'cm', 'deg', 'degFlat', 'degFlatPos']:
-            p_pix = (p[0]*(-1/self.win.size[0])+0.5, p[1]*(-1/self.win.size[1])+0.5)
+            p_pix = ((-2*p[0]+1)*self.win.size[0]/2, (-2*p[1]+1)*self.win.size[1]/2)
             if units == 'pix':
                 return p_pix
             elif units == 'cm':
