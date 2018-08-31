@@ -780,7 +780,7 @@ class tobii_controller:
         elif self.win.units == 'height':
             return ((p[0]-0.5)*(self.win.size[0]/self.win.size[1]), -p[1]+0.5)
         elif self.win.units in ['pix', 'cm', 'deg', 'degFlat', 'degFlatPos']:
-            p_pix = ((2*p[0]-1)*(self.win.size[0]/2), (-2*p[1]-1)*(self.win.size[1]/2))
+            p_pix = ((p[0]-0.5)*self.win.size[0], (-p[1]+0.5)*self.win.size[1])
             if self.win.units == 'pix':
                 return p_pix
             elif self.win.units == 'cm':
@@ -804,23 +804,23 @@ class tobii_controller:
             return ((p[0]+1)/2, (p[1]-1)/-2)
         elif self.win.units == 'height':
             return (p[0]*(self.win.size[1]/self.win.size[0])+0.5, -p[1]+0.5)
-        elif self.win.units in ['pix', 'cm', 'deg', 'degFlat', 'degFlatPos']:
-            if self.win.units == 'pix':
-                p_pix = p # for congruency
-            elif self.win.units == 'cm':
+        elif self.win.units == 'pix':
+            return self.pix2tobii(p)
+        elif self.win.units in ['cm', 'deg', 'degFlat', 'degFlatPos']:
+            if self.win.units == 'cm':
                 p_pix = (cm2pix(p[0], self.win.monitor), cm2pix(p[1], self.win.monitor))
             elif self.win.units == 'deg':
                 p_pix = (deg2pix(p[0], self.win.monitor), deg2pix(p[1], self.win.monitor))
             elif self.win.units in ['degFlat', 'degFlatPos']:
                 p_pix = (deg2pix(np.array(p), self.win.monitor, correctFlat=True))
 
-            return(self.pix2tobii(p_pix))
+            return self.pix2tobii(p_pix)
         else:
             raise ValueError('unit ({}) is not supported'.format(self.win.units))
 
 
     def pix2tobii(self, p):
-        return (p[0]*(1/self.win.size[0])+0.5, p[1]*(-1/self.win.size[1])+0.5)
+        return (p[0]/self.win.size[0]+0.5, -p[1]/self.win.size[1]+0.5)
 
 
     def get_psychopy_pos_from_trackbox(self, p, units=None):
