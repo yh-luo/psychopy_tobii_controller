@@ -182,11 +182,15 @@ class tobii_controller:
                 msgst += 'Right: {:.3f},{:.3f},{:.3f}\n'.format(*rp)
                 msg.setText(msgst)
                 if lv:
-                    leye.setPos(self.get_psychopy_pos_from_trackbox((lp[0], lp[1]), 'height'))
+                    leye.setPos([0.6*x for x in
+                        self.get_psychopy_pos_from_trackbox((lp[0], lp[1]),
+                        'height')])
                     leye.setRadius((1-lp[2])/2)
                     leye.draw()
                 if rv:
-                    reye.setPos(self.get_psychopy_pos_from_trackbox((rp[0], rp[1]), 'height'))
+                    reye.setPos([0.6*x for x i
+                        self.get_psychopy_pos_from_trackbox((rp[0], rp[1]),
+                        'height')])
                     reye.setRadius((1-rp[2])/2)
                     reye.draw()
 
